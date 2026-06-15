@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Entertainment OS</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMGEwYTBmIiByeD0iNCIvPjxyZWN0IHg9IjMiIHk9IjQiIHdpZHRoPSIzIiBoZWlnaHQ9IjI0IiBmaWxsPSIjZThmZjVhIi8+PHJlY3QgeD0iMyIgeT0iNCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjMiIGZpbGw9IiNlOGZmNWEiLz48cmVjdCB4PSIzIiB5PSIxNCIgd2lkdGg9IjExIiBoZWlnaHQ9IjMiIGZpbGw9IiNlOGZmNWEiLz48dGV4dCB4PSIxMSIgeT0iMjgiIGZvbnQtZmFtaWx5PSJBcmlhbCBCbGFjayxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9IjgiIGZpbGw9IiNmMGYwZjgiIGxldHRlci1zcGFjaW5nPSItMC41Ij5PUzwvdGV4dD48L3N2Zz4=">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #22223a;
+    --accent: #e8ff5a;
+    --accent2: #ff5a8a;
+    --accent3: #5aadff;
+    --accent4: #b45aff;
+    --accent5: #5affcc;
+    --text: #f0f0f8;
+    --muted: #6b6b88;
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Header */
+  header {
+    padding: 2rem 3rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .logo-tag {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 0.15rem 0.5rem;
+    font-size: 0.6rem;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent5);
+    box-shadow: 0 0 8px var(--accent5);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  .status-text { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* Nav tabs */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 3rem;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: var(--surface);
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  .tab:hover { color: var(--text); }
+
+  .tab.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-icon { font-size: 0.85rem; }
+
+  /* Main content */
+  main {
+    padding: 2.5rem 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Category panel */
+  .panel { display: none; animation: fadeUp 0.3s ease; }
+  .panel.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Panel header */
+  .panel-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-title {
+    font-family: var(--font-head);
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .panel-subtitle {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  .panel-badge {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Pro tip banner */
+  .pro-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: linear-gradient(135deg, rgba(232,255,90,0.06), rgba(232,255,90,0.02));
+    border: 1px solid rgba(232,255,90,0.2);
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .pro-tip-label {
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 0.1rem;
+    border: 1px solid var(--accent);
+    padding: 0.2rem 0.5rem;
+    height: fit-content;
+    margin-top: 0.1rem;
+  }
+
+  .pro-tip-text {
+    font-size: 0.75rem;
+    color: rgba(240,240,248,0.75);
+    line-height: 1.6;
+  }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .card {
+    background: var(--surface);
+    padding: 1.75rem 1.5rem;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--card-accent, var(--accent));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .card:hover { background: var(--surface2); }
+  .card:hover::before { opacity: 1; }
+
+  .card-num {
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  .card-name {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .card-tag {
+    display: inline-block;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .card-desc {
+    font-size: 0.72rem;
+    line-height: 1.65;
+    color: rgba(240,240,248,0.65);
+    margin-bottom: 1.2rem;
+  }
+
+  .card-link {
+    font-size: 0.65rem;
+    color: var(--card-accent, var(--accent));
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: gap 0.2s;
+  }
+
+  .card-link:hover { gap: 0.75rem; }
+
+  /* Premium section */
+  .premium-section {
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+    padding: 2rem;
+    background: var(--surface);
+  }
+
+  .premium-title {
+    font-family: var(--font-head);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .premium-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .stack-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    font-size: 0.7rem;
+    line-height: 1.6;
+    color: rgba(240,240,248,0.7);
+  }
+
+  .stack-item strong {
+    display: block;
+    color: var(--text);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 0.35rem;
+  }
+
+  /* Overview panel */
+  .overview-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 1px;
+  }
+
+  .overview-stat {
+    background: var(--surface);
+    padding: 2.5rem 2rem;
+  }
+
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .overview-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+
+  .ov-card {
+    background: var(--surface);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .ov-card:hover { background: var(--surface2); }
+
+  .ov-icon { font-size: 1.5rem; margin-bottom: 0.75rem; }
+
+  .ov-name {
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .ov-count {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+
+  @media (max-width: 768px) {
+    header { padding: 1.5rem; }
+    .nav-tabs { padding: 0 1.5rem; }
+    main { padding: 1.5rem; }
+    .panel-title { font-size: 2rem; }
+    .overview-hero { grid-template-columns: 1fr; }
+    .overview-cards { grid-template-columns: repeat(2, 1fr); }
+    .stat-num { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    FREE<span style="color:var(--accent)">OS</span>
+    <span class="logo-tag">Entertainment</span>
+  </div>
+  <div class="header-right">
+    <div class="status-dot"></div>
+    <span class="status-text">40 Platforms · 100% Free · Legal</span>
+  </div>
+</header>
+
+<nav class="nav-tabs" id="navTabs">
+  <button class="tab active" onclick="showPanel('overview')" data-panel="overview"><span class="tab-icon">⊞</span> Overview</button>
+  <button class="tab" onclick="showPanel('movies')" data-panel="movies"><span class="tab-icon">🎬</span> Movies</button>
+  <button class="tab" onclick="showPanel('tv')" data-panel="tv"><span class="tab-icon">📺</span> TV Shows</button>
+  <button class="tab" onclick="showPanel('music')" data-panel="music"><span class="tab-icon">🎵</span> Music</button>
+  <button class="tab" onclick="showPanel('podcasts')" data-panel="podcasts"><span class="tab-icon">🎙️</span> Podcasts</button>
+  <button class="tab" onclick="showPanel('books')" data-panel="books"><span class="tab-icon">📚</span> Books</button>
+  <button class="tab" onclick="showPanel('games')" data-panel="games"><span class="tab-icon">🎮</span> Games</button>
+  <button class="tab" onclick="showPanel('docs')" data-panel="docs"><span class="tab-icon">🎥</span> Docs</button>
+  <button class="tab" onclick="showPanel('learning')" data-panel="learning"><span class="tab-icon">🧠</span> Learning</button>
+</nav>
+
+<main>
+
+<!-- OVERVIEW -->
+<div class="panel active" id="panel-overview">
+  <div style="margin-bottom:2rem">
+    <div style="font-family:var(--font-head);font-size:3.5rem;font-weight:800;letter-spacing:-0.04em;line-height:1.1;margin-bottom:0.75rem">
+      Your Free<br><span style="color:var(--accent)">Premium</span> Stack
+    </div>
+    <div style="font-size:0.75rem;color:var(--muted);line-height:1.7;max-width:520px">
+      40 free, legal platforms across 8 categories. Each one is premium-tier when used strategically. Zero subscriptions required.
+    </div>
+  </div>
+
+  <div class="overview-hero">
+    <div class="overview-stat">
+      <div class="stat-num" style="color:var(--accent)">40</div>
+      <div class="stat-label">Curated Platforms</div>
+    </div>
+    <div class="overview-stat">
+      <div class="stat-num" style="color:var(--accent3)">$0</div>
+      <div class="stat-label">Monthly Cost</div>
+    </div>
+  </div>
+
+  <div class="overview-cards">
+    <div class="ov-card" onclick="showPanel('movies')">
+      <div class="ov-icon">🎬</div>
+      <div class="ov-name">Movies</div>
+      <div class="ov-count">5 platforms</div>
+    </div>
+    <div class="ov-card" onclick="showPanel('tv')">
+      <div class="ov-icon">📺</div>
+      <div class="ov-name">TV Shows</div>
+      <div class="ov-count">5 platforms</div>
+    </div>
+    <div class="ov-card" onclick="showPanel('music')">
+      <div class="ov-icon">🎵</div>
+      <div class="ov-name">Music</div>
+      <div class="ov-count">5 platforms</div>
+    </div>
+    <div class="ov-card" onclick="showPanel('podcasts')">
+      <div class="ov-icon">🎙️</div>
+      <div class="ov-name">Podcasts</div>
+      <div class="ov-count">5 platforms</div>
+    </div>
+    <div class="ov-card" onclick="showPanel('books')">
+      <div class="ov-icon">📚</div>
+      <div class="ov-name">Books</div>
+      <div class="ov-count">5 platforms</div>
+    </div>
+    <div class="ov-card" onclick="showPanel('games')">
+      <div class="ov-icon">🎮</div>
+      <div class="ov-name">Games</div>
+      <div class="ov-count">5 platforms</div>
+    </div>
+    <div class="ov-card" onclick="showPanel('docs')">
+      <div class="ov-icon">🎥</div>
+      <div class="ov-name">Documentaries</div>
+      <div class="ov-count">5 platforms</div>
+    </div>
+    <div class="ov-card" onclick="showPanel('learning')">
+      <div class="ov-icon">🧠</div>
+      <div class="ov-name">Learning</div>
+      <div class="ov-count">5 platforms</div>
+    </div>
+  </div>
+
+  <div class="premium-section" style="margin-top:2rem">
+    <div class="premium-title">How to Use This Like a Premium System</div>
+    <div class="stack-grid">
+      <div class="stack-item"><strong>Create Accounts</strong>Register on each platform — most unlock personalization, watchlists, and recommendations.</div>
+      <div class="stack-item"><strong>Set Up Profiles</strong>Fill out your taste preferences. Better data = better algorithm = better suggestions.</div>
+      <div class="stack-item"><strong>Use Browser Profiles</strong>One browser profile per category keeps things organized and ad-free.</div>
+      <div class="stack-item"><strong>Install uBlock Origin</strong>Removes ads on ad-supported tiers. Transforms free into premium instantly.</div>
+      <div class="stack-item"><strong>Enable Notifications</strong>New drops, curated lists, and editorial picks come to you. Zero effort curation.</div>
+      <div class="stack-item"><strong>Build Watchlists</strong>Use each platform's queue system. Your personal Netflix-style UI is waiting.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MOVIES -->
+<div class="panel" id="panel-movies">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" style="color:var(--accent2)">🎬 Movies</div>
+      <div class="panel-subtitle">Free streaming · No credit card · Legal</div>
+    </div>
+    <div class="panel-badge">5 Platforms</div>
+  </div>
+  <div class="pro-tip">
+    <span class="pro-tip-label">Pro Tip</span>
+    <span class="pro-tip-text">Install uBlock Origin + use Tubi for Hollywood hits, Kanopy for award-winners via your library card, and Pluto TV for channel-surfing nostalgia. Together they replace Netflix + HBO.</span>
+  </div>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">01 / 05</div>
+      <div class="card-name">Tubi</div>
+      <div class="card-tag">Ad-Supported · Free</div>
+      <div class="card-desc">Over 50,000 movies and shows including major Hollywood titles, cult classics, and international films. Best free streaming library online.</div>
+      <a class="card-link" href="https://tubitv.com" target="_blank">tubitv.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">02 / 05</div>
+      <div class="card-name">Kanopy</div>
+      <div class="card-tag">Library Card · Zero Ads</div>
+      <div class="card-desc">Connect your public library card for unlimited access to indie films, Criterion classics, award-winners, and documentaries. Ad-free, completely.</div>
+      <a class="card-link" href="https://kanopy.com" target="_blank">kanopy.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">03 / 05</div>
+      <div class="card-name">Pluto TV</div>
+      <div class="card-tag">Live Channels · VOD</div>
+      <div class="card-desc">250+ live channels organized like cable TV, plus a VOD library. Perfect for passive watching without decision fatigue. No signup required.</div>
+      <a class="card-link" href="https://pluto.tv" target="_blank">pluto.tv →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">04 / 05</div>
+      <div class="card-name">Plex</div>
+      <div class="card-tag">Free Tier + Personal Library</div>
+      <div class="card-desc">Free ad-supported movies AND your own media server. Stream your personal collection plus Plex's free catalog from any device anywhere.</div>
+      <a class="card-link" href="https://plex.tv" target="_blank">plex.tv →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">05 / 05</div>
+      <div class="card-name">Internet Archive</div>
+      <div class="card-tag">Public Domain · Classic Films</div>
+      <div class="card-desc">Thousands of public-domain films — 1920s-1960s classics, noir, silent films, foreign cinema. Ideal for cinephiles who want depth over blockbusters.</div>
+      <a class="card-link" href="https://archive.org/details/movies" target="_blank">archive.org →</a>
+    </div>
+  </div>
+</div>
+
+<!-- TV SHOWS -->
+<div class="panel" id="panel-tv">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" style="color:var(--accent3)">📺 TV Shows</div>
+      <div class="panel-subtitle">Full series · Binge-ready · No cost</div>
+    </div>
+    <div class="panel-badge">5 Platforms</div>
+  </div>
+  <div class="pro-tip">
+    <span class="pro-tip-label">Pro Tip</span>
+    <span class="pro-tip-text">Tubi's TV section rivals a cable package. Pair it with Peacock's free tier for NBC classics and The Roku Channel for extras. Create accounts on all three to unlock personal watchlists.</span>
+  </div>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">01 / 05</div>
+      <div class="card-name">Tubi (TV)</div>
+      <div class="card-tag">Full Series · Free</div>
+      <div class="card-desc">Thousands of full TV series from comedy to drama to reality. Includes Fox content, international shows, and canceled cult favorites worth rediscovering.</div>
+      <a class="card-link" href="https://tubitv.com/tv-shows" target="_blank">tubitv.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">02 / 05</div>
+      <div class="card-name">Peacock Free</div>
+      <div class="card-tag">NBC / Universal · Partial Ads</div>
+      <div class="card-desc">Free tier includes classic NBC shows (The Office, Parks & Rec), WWE content, news, and Universal movies. Premium content unlocks with card but free tier is substantial.</div>
+      <a class="card-link" href="https://peacocktv.com" target="_blank">peacocktv.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">03 / 05</div>
+      <div class="card-name">The Roku Channel</div>
+      <div class="card-tag">No Device Needed · Web</div>
+      <div class="card-desc">Accessible in browser — no Roku device required. Solid TV library with live channels, original content, and curated collections. Underrated gem.</div>
+      <a class="card-link" href="https://therokuchannel.roku.com" target="_blank">therokuchannel.roku.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">04 / 05</div>
+      <div class="card-name">Crackle</div>
+      <div class="card-tag">Sony · Original Series</div>
+      <div class="card-desc">Sony's free streaming service with original programming, movies, and TV. Lesser-known but curated catalog with Seinfeld and other Sony-owned classics.</div>
+      <a class="card-link" href="https://crackle.com" target="_blank">crackle.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">05 / 05</div>
+      <div class="card-name">YouTube (Free TV)</div>
+      <div class="card-tag">Legal Full Episodes · Free</div>
+      <div class="card-desc">Hundreds of full TV series uploaded legally by networks — PBS, BBC, CBS, and more. Search "[Show Name] full episode official" for best results.</div>
+      <a class="card-link" href="https://youtube.com" target="_blank">youtube.com →</a>
+    </div>
+  </div>
+</div>
+
+<!-- MUSIC -->
+<div class="panel" id="panel-music">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" style="color:var(--accent4)">🎵 Music</div>
+      <div class="panel-subtitle">Streaming · Discovery · Downloads</div>
+    </div>
+    <div class="panel-badge">5 Platforms</div>
+  </div>
+  <div class="pro-tip">
+    <span class="pro-tip-label">Pro Tip</span>
+    <span class="pro-tip-text">Use Spotify free for discovery, SoundCloud for underground/independent artists, and YouTube Music free on desktop (no premium needed on laptop). Together they cover every genre on earth.</span>
+  </div>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:var(--accent4)">
+      <div class="card-num">01 / 05</div>
+      <div class="card-name">Spotify Free</div>
+      <div class="card-tag">World's Largest · Ad-Supported</div>
+      <div class="card-desc">100M+ tracks with algorithmic playlists (Discover Weekly, Daily Mix) that rival any paid curation service. On desktop: unlimited skips, no shuffle restriction.</div>
+      <a class="card-link" href="https://spotify.com" target="_blank">spotify.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent4)">
+      <div class="card-num">02 / 05</div>
+      <div class="card-name">YouTube Music</div>
+      <div class="card-tag">Google · Video + Audio</div>
+      <div class="card-desc">Free on desktop — access every song, live performance, and rare recording ever uploaded. Unique "video mode" lets you watch music videos while streaming.</div>
+      <a class="card-link" href="https://music.youtube.com" target="_blank">music.youtube.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent4)">
+      <div class="card-num">03 / 05</div>
+      <div class="card-name">SoundCloud Free</div>
+      <div class="card-tag">Independent · Underground</div>
+      <div class="card-desc">Home to 350M+ tracks from independent artists. Best for discovering emerging acts before they blow up. No major-label gatekeeping. Raw and authentic.</div>
+      <a class="card-link" href="https://soundcloud.com" target="_blank">soundcloud.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent4)">
+      <div class="card-num">04 / 05</div>
+      <div class="card-name">Bandcamp</div>
+      <div class="card-tag">Artist-Direct · Free Streaming</div>
+      <div class="card-desc">Stream full albums for free before buying. Artists get 82% of sales. Best platform for supporting musicians directly while discovering incredible indie/experimental work.</div>
+      <a class="card-link" href="https://bandcamp.com" target="_blank">bandcamp.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent4)">
+      <div class="card-num">05 / 05</div>
+      <div class="card-name">Deezer Free</div>
+      <div class="card-tag">90M Tracks · Flow Feature</div>
+      <div class="card-desc">"Flow" — Deezer's infinite radio that learns from every track you react to — is among the best music discovery engines available on a free tier.</div>
+      <a class="card-link" href="https://deezer.com" target="_blank">deezer.com →</a>
+    </div>
+  </div>
+</div>
+
+<!-- PODCASTS -->
+<div class="panel" id="panel-podcasts">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" style="color:var(--accent5)">🎙️ Podcasts</div>
+      <div class="panel-subtitle">Always free · No paywall · Unlimited</div>
+    </div>
+    <div class="panel-badge">5 Platforms</div>
+  </div>
+  <div class="pro-tip">
+    <span class="pro-tip-label">Pro Tip</span>
+    <span class="pro-tip-text">Pocket Casts (web version is free) is the power user's choice — variable speed, silence trimmer, cross-device sync. Combine with Spotify for exclusive podcast content locked to their platform.</span>
+  </div>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:var(--accent5)">
+      <div class="card-num">01 / 05</div>
+      <div class="card-name">Spotify Podcasts</div>
+      <div class="card-tag">Exclusive Content · Free</div>
+      <div class="card-desc">Hosts exclusive shows from Joe Rogan, Conan O'Brien, and major news networks. The only platform with certain locked originals. Free with account.</div>
+      <a class="card-link" href="https://spotify.com/podcasts" target="_blank">spotify.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent5)">
+      <div class="card-num">02 / 05</div>
+      <div class="card-name">Pocket Casts (Web)</div>
+      <div class="card-tag">Power User · Free Web Version</div>
+      <div class="card-desc">Best podcast player UI with playback speed control, smart silence trimming, chapter support, and cross-platform sync. Web version is free. Desktop-grade experience.</div>
+      <a class="card-link" href="https://play.pocketcasts.com" target="_blank">play.pocketcasts.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent5)">
+      <div class="card-num">03 / 05</div>
+      <div class="card-name">Podbean</div>
+      <div class="card-tag">Vast Library · Clean UI</div>
+      <div class="card-desc">100M+ podcast episodes with clean discovery, trending charts, and curated picks. Great for finding niche shows outside the mainstream algorithm.</div>
+      <a class="card-link" href="https://podbean.com" target="_blank">podbean.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent5)">
+      <div class="card-num">04 / 05</div>
+      <div class="card-name">Listen Notes</div>
+      <div class="card-tag">Best Search Engine · Podcast-Only</div>
+      <div class="card-desc">The Google of podcasts. Search inside specific episodes, not just show titles. Invaluable for finding a specific topic discussed in a podcast years ago.</div>
+      <a class="card-link" href="https://listennotes.com" target="_blank">listennotes.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent5)">
+      <div class="card-num">05 / 05</div>
+      <div class="card-name">Castbox</div>
+      <div class="card-tag">AI Transcripts · Highlights</div>
+      <div class="card-desc">Unique AI-generated transcripts for podcasts — read along while you listen or search inside episodes for specific quotes. Free and highly underrated.</div>
+      <a class="card-link" href="https://castbox.fm" target="_blank">castbox.fm →</a>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKS -->
+<div class="panel" id="panel-books">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" style="color:#ff9f5a">📚 Books</div>
+      <div class="panel-subtitle">Ebooks · Audiobooks · Classics</div>
+    </div>
+    <div class="panel-badge">5 Platforms</div>
+  </div>
+  <div class="pro-tip">
+    <span class="pro-tip-label">Pro Tip</span>
+    <span class="pro-tip-text">Get a library card for Libby — it's Spotify for books, completely free. Pair with Project Gutenberg for classics and Standard Ebooks for beautified public-domain editions. You'll never need Audible.</span>
+  </div>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:#ff9f5a">
+      <div class="card-num">01 / 05</div>
+      <div class="card-name">Libby</div>
+      <div class="card-tag">Library Card · Audiobooks + Ebooks</div>
+      <div class="card-desc">The single best free reading app. Connect your library card for unlimited ebook and audiobook borrowing. Titles include bestsellers, new releases, and classics. Premium quality, zero cost.</div>
+      <a class="card-link" href="https://libbyapp.com" target="_blank">libbyapp.com →</a>
+    </div>
+    <div class="card" style="--card-accent:#ff9f5a">
+      <div class="card-num">02 / 05</div>
+      <div class="card-name">Project Gutenberg</div>
+      <div class="card-tag">70,000+ Classics · Public Domain</div>
+      <div class="card-desc">60,000+ free ebooks — every great novel, philosophy text, poetry collection, and historical document in human history that's entered public domain. Download in any format.</div>
+      <a class="card-link" href="https://gutenberg.org" target="_blank">gutenberg.org →</a>
+    </div>
+    <div class="card" style="--card-accent:#ff9f5a">
+      <div class="card-num">03 / 05</div>
+      <div class="card-name">Standard Ebooks</div>
+      <div class="card-tag">Beautifully Formatted · Free</div>
+      <div class="card-desc">Takes Gutenberg's raw texts and produces stunning, typographically refined ebooks. Every book looks like a premium Kindle edition. Life-changing for classic literature lovers.</div>
+      <a class="card-link" href="https://standardebooks.org" target="_blank">standardebooks.org →</a>
+    </div>
+    <div class="card" style="--card-accent:#ff9f5a">
+      <div class="card-num">04 / 05</div>
+      <div class="card-name">Open Library</div>
+      <div class="card-tag">Internet Archive · Borrow System</div>
+      <div class="card-desc">Borrow millions of scanned books digitally — including recent publications not in public domain. One-hour and 14-day loans available. Backed by Internet Archive.</div>
+      <a class="card-link" href="https://openlibrary.org" target="_blank">openlibrary.org →</a>
+    </div>
+    <div class="card" style="--card-accent:#ff9f5a">
+      <div class="card-num">05 / 05</div>
+      <div class="card-name">LibriVox</div>
+      <div class="card-tag">Free Audiobooks · Human-Read</div>
+      <div class="card-desc">Volunteer-narrated audiobooks of public domain works. Every classic audiobook you'd pay for on Audible is here free. Quality varies but the best narrations are excellent.</div>
+      <a class="card-link" href="https://librivox.org" target="_blank">librivox.org →</a>
+    </div>
+  </div>
+</div>
+
+<!-- GAMES -->
+<div class="panel" id="panel-games">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" style="color:var(--accent)">🎮 Games</div>
+      <div class="panel-subtitle">Browser · PC · No downloads needed</div>
+    </div>
+    <div class="panel-badge">5 Platforms</div>
+  </div>
+  <div class="pro-tip">
+    <span class="pro-tip-label">Pro Tip</span>
+    <span class="pro-tip-text">Epic Games gives away free games weekly — claim everything even if you won't play it. Over time you'll accumulate 200+ premium titles in your library permanently. Check every Thursday.</span>
+  </div>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:var(--accent)">
+      <div class="card-num">01 / 05</div>
+      <div class="card-name">Epic Games Free</div>
+      <div class="card-tag">Weekly Giveaways · Permanent</div>
+      <div class="card-desc">Every week, Epic gives away 1-2 premium PC games completely free. Claim them and they're yours forever. In a year, you'll own more games than you can play.</div>
+      <a class="card-link" href="https://epicgames.com/store/free-games" target="_blank">epicgames.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent)">
+      <div class="card-num">02 / 05</div>
+      <div class="card-name">itch.io</div>
+      <div class="card-tag">Indie · Browser Games · Bundles</div>
+      <div class="card-desc">Thousands of free indie games playable in browser. Frequent charity bundles (pay-what-you-want) give hundreds of games for $5–10. The best indie game ecosystem.</div>
+      <a class="card-link" href="https://itch.io" target="_blank">itch.io →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent)">
+      <div class="card-num">03 / 05</div>
+      <div class="card-name">Steam Free-to-Play</div>
+      <div class="card-tag">F2P AAA Games · Massive</div>
+      <div class="card-desc">Hundreds of free-to-play titles including Warframe, Path of Exile, Apex Legends, and Dota 2 — each with 500+ hours of content. No cost to start.</div>
+      <a class="card-link" href="https://store.steampowered.com/genre/Free%20to%20Play" target="_blank">store.steampowered.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent)">
+      <div class="card-num">04 / 05</div>
+      <div class="card-name">Chess.com Free</div>
+      <div class="card-tag">Brain Games · Competitive</div>
+      <div class="card-desc">The world's best chess platform with puzzles, analysis, tournaments, and lessons on the free tier. Genuinely engaging and endlessly replayable.</div>
+      <a class="card-link" href="https://chess.com" target="_blank">chess.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent)">
+      <div class="card-num">05 / 05</div>
+      <div class="card-name">Poki</div>
+      <div class="card-tag">Browser · No Install · Instant</div>
+      <div class="card-desc">Hundreds of polished browser games — platformers, puzzles, racing, strategy — playable instantly. No downloads, no accounts. Best for casual sessions.</div>
+      <a class="card-link" href="https://poki.com" target="_blank">poki.com →</a>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENTARIES -->
+<div class="panel" id="panel-docs">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" style="color:var(--accent2)">🎥 Documentaries</div>
+      <div class="panel-subtitle">Award-winning · Educational · Free</div>
+    </div>
+    <div class="panel-badge">5 Platforms</div>
+  </div>
+  <div class="pro-tip">
+    <span class="pro-tip-label">Pro Tip</span>
+    <span class="pro-tip-text">Kanopy (library card) has the Criterion Collection of documentaries. Top Documentary Films is a pure index — use it to find titles, then search for them on Tubi or YouTube. Two-step system beats any single platform.</span>
+  </div>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">01 / 05</div>
+      <div class="card-name">Kanopy (Docs)</div>
+      <div class="card-tag">Criterion · Award Films · Free</div>
+      <div class="card-desc">The finest documentary collection online, accessed via library card. Includes films unavailable anywhere else — ethnographic, political, award-winning international docs.</div>
+      <a class="card-link" href="https://kanopy.com" target="_blank">kanopy.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">02 / 05</div>
+      <div class="card-name">Top Documentary Films</div>
+      <div class="card-tag">Index + Stream · Pure Docs</div>
+      <div class="card-desc">Curated index of thousands of full documentaries embedded from legal sources. Categorized by topic — nature, history, science, crime, philosophy. A power-user's shortcut.</div>
+      <a class="card-link" href="https://topdocumentaryfilms.com" target="_blank">topdocumentaryfilms.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">03 / 05</div>
+      <div class="card-name">PBS Frontline</div>
+      <div class="card-tag">Investigative · Emmy-Winning</div>
+      <div class="card-desc">Every episode of PBS Frontline — one of America's most prestigious investigative documentary series — is free online. Decades of award-winning journalism.</div>
+      <a class="card-link" href="https://pbs.org/wgbh/frontline" target="_blank">pbs.org/frontline →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">04 / 05</div>
+      <div class="card-name">Al Jazeera Docs</div>
+      <div class="card-tag">Global Perspective · Free</div>
+      <div class="card-desc">Full-length documentaries from Al Jazeera's international journalism. Covers stories from Africa, Asia, Middle East, and Latin America that Western platforms ignore.</div>
+      <a class="card-link" href="https://aljazeera.com/features/documentaries" target="_blank">aljazeera.com →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent2)">
+      <div class="card-num">05 / 05</div>
+      <div class="card-name">YouTube Docs</div>
+      <div class="card-tag">BBC · National Geographic · Free</div>
+      <div class="card-desc">BBC, DW Documentary, National Geographic, Vice, and PBS all upload full documentaries to YouTube legally. Subscribe to their channels for a steady documentary feed.</div>
+      <a class="card-link" href="https://youtube.com/@BBCEarth" target="_blank">youtube.com →</a>
+    </div>
+  </div>
+</div>
+
+<!-- LEARNING -->
+<div class="panel" id="panel-learning">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title" style="color:var(--accent3)">🧠 Learning</div>
+      <div class="panel-subtitle">Courses · Skills · Certifications</div>
+    </div>
+    <div class="panel-badge">5 Platforms</div>
+  </div>
+  <div class="pro-tip">
+    <span class="pro-tip-label">Pro Tip</span>
+    <span class="pro-tip-text">MIT OpenCourseWare + freeCodeCamp is a full computer science degree for free. Use Coursera's audit mode (click "Audit" under the enrollment button) to access any course without paying. Combine with Khan Academy for foundational skills.</span>
+  </div>
+  <div class="cards-grid">
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">01 / 05</div>
+      <div class="card-name">MIT OpenCourseWare</div>
+      <div class="card-tag">University Level · All Subjects</div>
+      <div class="card-desc">Every MIT course — lectures, problem sets, exams — free and online. From quantum physics to literature. A complete world-class education if you put in the work.</div>
+      <a class="card-link" href="https://ocw.mit.edu" target="_blank">ocw.mit.edu →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">02 / 05</div>
+      <div class="card-name">freeCodeCamp</div>
+      <div class="card-tag">Coding · Projects · Certs</div>
+      <div class="card-desc">3,000+ hours of free coding curriculum across web dev, data science, machine learning, and security. Project-based learning with free certifications that employers recognize.</div>
+      <a class="card-link" href="https://freecodecamp.org" target="_blank">freecodecamp.org →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">03 / 05</div>
+      <div class="card-name">Khan Academy</div>
+      <div class="card-tag">K-12 to University · All Ages</div>
+      <div class="card-desc">The world's most comprehensive free education platform. Math, science, history, economics, SAT prep, and more — with exercises, videos, and progress tracking.</div>
+      <a class="card-link" href="https://khanacademy.org" target="_blank">khanacademy.org →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">04 / 05</div>
+      <div class="card-name">Coursera Audit</div>
+      <div class="card-tag">Top Universities · Free Audit</div>
+      <div class="card-desc">Audit any Coursera course from Stanford, Google, Yale, or IBM for free. Click "Audit" instead of enrolling paid. Full video access, no certificate. Massive value hidden behind a small button.</div>
+      <a class="card-link" href="https://coursera.org" target="_blank">coursera.org →</a>
+    </div>
+    <div class="card" style="--card-accent:var(--accent3)">
+      <div class="card-num">05 / 05</div>
+      <div class="card-name">YouTube EDU</div>
+      <div class="card-tag">Channels · Bite-Size Learning</div>
+      <div class="card-desc">3Blue1Brown (math), Kurzgesagt (science), Crash Course (everything), Lex Fridman (AI/tech), and hundreds more — YouTube's educational ecosystem is unmatched.</div>
+      <a class="card-link" href="https://youtube.com/edu" target="_blank">youtube.com →</a>
+    </div>
+  </div>
+
+  <div class="premium-section">
+    <div class="premium-title">The Complete Free Learning Stack</div>
+    <div class="stack-grid">
+      <div class="stack-item"><strong>Programming</strong>freeCodeCamp + The Odin Project + CS50 (Harvard, free on edX)</div>
+      <div class="stack-item"><strong>Mathematics</strong>Khan Academy → MIT OCW → 3Blue1Brown → Paul's Online Math Notes</div>
+      <div class="stack-item"><strong>Languages</strong>Duolingo + Language Transfer + Anki (spaced repetition flashcards)</div>
+      <div class="stack-item"><strong>Design</strong>Figma Community Files + DesignCourse on YouTube + Canva tutorials</div>
+      <div class="stack-item"><strong>Business</strong>Coursera Audit (Wharton MBA courses) + Harvard Business Review free articles</div>
+      <div class="stack-item"><strong>Science</strong>Khan Academy + MIT OCW + PBS Space Time + Kurzgesagt</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelector(`[data-panel="${id}"]`).classList.add('active');
+}
+</script>
+</body>
+</html>
